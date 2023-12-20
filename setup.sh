@@ -1,29 +1,27 @@
 #!/bin/bash
-# Set-up for Individual VMs of a Kubernetes Cluster 
 
 # Update package list
-sudo apt update
+sudo apt-get update
 
-# Install necessary packages
-sudo apt install -y nano net-tools openssh-server
-
-# Enable and allow SSH
-sudo systemctl enable ssh
-sudo ufw allow ssh
-sudo systemctl start ssh
+# Disable swap
+sudo swapoff -a
 
 # Install Docker
-sudo apt install docker.io -y
-
-# Install additional packages for Kubernetes
-sudo apt install apt-transport-https curl -y
-curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
-sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
-
-# Update package list again
-sudo apt update
+sudo apt-get install -y docker.io
 
 # Install Kubernetes components
-sudo apt install kubeadm kubelet kubectl kubernetes-cni -y
+sudo apt-get update && sudo apt-get install -y apt-transport-https curl
+
+# Add Kubernetes GPG key
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+
+# Add Kubernetes repository
+sudo tee /etc/apt/sources.list.d/kubernetes.list
+deb http://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+
+# Install Kubernetes packages
+sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
 
 echo "Setup complete!"
